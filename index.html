@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optique Physique - Cours Interactif</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0f23, #1a1a3e, #2d1b69);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #64b5f6;
+        }
+
+        .main-title {
+            font-size: 3rem;
+            color: #64b5f6;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(100, 181, 246, 0.6);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #90caf9;
+            margin-bottom: 20px;
+        }
+
+        .professor-note {
+            background: linear-gradient(45deg, rgba(100, 181, 246, 0.1), rgba(144, 202, 249, 0.05));
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #64b5f6;
+            font-style: italic;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #333;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #b0b0b0;
+            font-weight: bold;
+        }
+
+        .tab.active {
+            background: linear-gradient(45deg, #64b5f6, #42a5f5);
+            border-color: #64b5f6;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(100, 181, 246, 0.4);
+        }
+
+        .tab:hover {
+            border-color: #64b5f6;
+            color: #64b5f6;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .theory-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .theory-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(100, 181, 246, 0.2);
+        }
+
+        .card-title {
+            color: #64b5f6;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(100, 181, 246, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .formula {
+            background: linear-gradient(135deg, rgba(100, 181, 246, 0.1), rgba(33, 150, 243, 0.05));
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #64b5f6;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .formula-title {
+            color: #90caf9;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .variables {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+
+        .variable-item {
+            margin: 5px 0;
+            color: #e0e0e0;
+        }
+
+        .variable-symbol {
+            color: #ffa726;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .simulation-container {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #333;
+        }
+
+        .sim-title {
+            text-align: center;
+            color: #64b5f6;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            text-align: center;
+        }
+
+        .control-label {
+            color: #90caf9;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #333;
+            outline: none;
+            -webkit-appearance: none;
+            margin-bottom: 8px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #64b5f6, #42a5f5);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(100, 181, 246, 0.5);
+        }
+
+        .value-display {
+            background: rgba(100, 181, 246, 0.1);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(100, 181, 246, 0.3);
+            font-size: 0.9rem;
+        }
+
+        canvas {
+            border: 2px solid #64b5f6;
+            border-radius: 10px;
+            background: #000;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(100, 181, 246, 0.3);
+        }
+
+        .explanation {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .example {
+            background: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .important {
+            background: rgba(244, 67, 54, 0.1);
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .wave-visualization {
+            height: 200px;
+            background: #000;
+            border-radius: 10px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 30px rgba(100, 181, 246, 0.6); }
+            to { text-shadow: 0 0 40px rgba(100, 181, 246, 0.9); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .formula-complex {
+            font-size: 1.2rem;
+            text-align: center;
+            color: #64b5f6;
+            margin: 10px 0;
+        }
+
+        .conditions {
+            background: rgba(156, 39, 176, 0.1);
+            border-left: 4px solid #9c27b0;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+        }
+
+        .diagram-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .ascii-diagram {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            color: #64b5f6;
+            font-size: 0.9rem;
+            line-height: 1.2;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="main-title">🌊 Optique Physique</h1>
+        <p class="subtitle">Interférences et Diffraction - Cours Magistral Interactif</p>
+        <div class="professor-note">
+            👨‍🏫 "L'optique physique nous révèle la nature ondulatoire de la lumière. Contrairement à l'optique géométrique, 
+            nous devons ici considérer les phénomènes d'interférences et de diffraction qui se manifestent lorsque 
+            les dimensions des objets deviennent comparables à la longueur d'onde."
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="showSection('interference')">Interférences</div>
+            <div class="tab" onclick="showSection('diffraction')">Diffraction</div>
+            <div class="tab" onclick="showSection('young')">Fentes de Young</div>
+            <div class="tab" onclick="showSection('fresnel')">Fresnel</div>
+            <div class="tab" onclick="showSection('simulations')">Simulations</div>
+        </div>
+
+        <!-- Section Interférences -->
+        <div id="interference" class="content-section active">
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3 class="card-title">🌊 Principe des Interférences</h3>
+                    <div class="explanation">
+                        Les interférences résultent de la superposition de deux ou plusieurs ondes lumineuses cohérentes.
+                    </div>
+                    
+                    <div class="formula-title">Condition de cohérence temporelle :</div>
+                    <div class="formula">
+                        Δt < τ<sub>c</sub> = λ²/(c·Δλ)
+                    </div>
+                    
+                    <div class="formula-title">Condition de cohérence spatiale :</div>
+                    <div class="formula">
+                        θ < λ/D
+                    </div>
+                    
+                    <div class="variables">
+                        <div class="variable-item"><span class="variable-symbol">τc</span> : temps de cohérence</div>
+                        <div class="variable-item"><span class="variable-symbol">λ</span> : longueur d'onde</div>
+                        <div class="variable-item"><span class="variable-symbol">Δλ</span> : largeur spectrale</div>
+                        <div class="variable-item"><span class="variable-symbol">D</span> : dimension de la source</div>
+                        <div class="variable-item"><span class="variable-symbol">θ</span> : angle de cohérence</div>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3 class="card-title">➕ Interférences Constructives/Destructives</h3>
+                    
+                    <div class="formula-title">Différence de marche :</div>
+                    <div class="formula">
+                        δ = n₁·L₁ - n₂·L₂
+                    </div>
+                    
+                    <div class="formula-title">Condition d'interférences :</div>
+                    <div class="formula">
+                        • Constructives : δ = k·λ (k ∈ ℤ)<br>
+                        • Destructives : δ = (k + 1/2)·λ
+                    </div>
+                    
+                    <div class="formula-title">Intensité résultante :</div>
+                    <div class="formula">
+                        I = I₁ + I₂ + 2√(I₁I₂)·cos(2πδ/λ)
+                    </div>
+                    
+                    <div class="important">
+                        <strong>Cas particulier :</strong> Si I₁ = I₂ = I₀<br>
+                        I = 2I₀(1 + cos(2πδ/λ)) = 4I₀·cos²(πδ/λ)
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3 class="card-title">🔄 Contraste et Visibilité</h3>
+                    
+                    <div class="formula-title">Contraste (Visibilité) :</div>
+                    <div class="formula">
+                        V = (I<sub>max</sub> - I<sub>min</sub>)/(I<sub>max</sub> + I<sub>min</sub>)
+                    </div>
+                    
+                    <div class="formula-title">En fonction des intensités :</div>
+                    <div class="formula">
+                        V = 2√(I₁I₂)/(I₁ + I₂)
+                    </div>
+                    
+                    <div class="conditions">
+                        <strong>Conditions :</strong><br>
+                        • V = 1 : contraste maximum (I₁ = I₂)<br>
+                        • V = 0 : pas de contraste (sources incohérentes)<br>
+                        • 0 < V < 1 : contraste partiel
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3 class="card-title">🎯 Interféromètre de Michelson</h3>
+                    
+                    <div class="ascii-diagram">
+Source S ━━━━┓
+            ┃  Séparatrice
+            ┃      ┏━━━━━━━━ M₁
+            ┃    ╱ ┃
+            ┃  ╱   ┃
+            ┗╱     ┃
+           ╱ ╲     ┃
+         ╱     ╲   ┃
+    Écran     M₂━━━┛
+                    </div>
+                    
+                    <div class="formula-title">Différence de marche :</div>
+                    <div class="formula">
+                        δ = 2(e₁ - e₂)
+                    </div>
+                    
+                    <div class="formula-title">Ordre d'interférence :</div>
+                    <div class="formula">
+                        p = δ/λ = 2(e₁ - e₂)/λ
+                    </div>
+                    
+                    <div class="example">
+                        <strong>Application :</strong> Mesure de longueur d'onde<br>
+                        Si on déplace M₁ de Δe, on observe Δp franges :<br>
+                        λ = 2Δe/Δp
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Diffraction -->
+        <div id="diffraction" class="content-section">
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3 class="card-title">🌀 Principe de Huygens-Fresnel</h3>
+                    
+                    <div class="explanation">
+                        Chaque point d'un front d'onde peut être considéré comme une source ponctuelle d'ondelettes sphériques.
+                    </div>
+                    
+                    <div class="formula-title">Principe de Huygens-Fresnel :</div>
+                    <div class="formula">
+                        E(P) = ∫∫ E(M) · (e^(ikr))/(iλr) · cos(θ) dS
+                    </div>
+                    
+                    <div class="variables">
+                        <div class="variable-item"><span class="variable-symbol">E(P)</span> : amplitude au point P</div>
+                        <div class="variable-item"><span class="variable-symbol">E(M)</span> : amplitude au point M de l'ouverture</div>
+                        <div class="variable-item"><span class="variable-symbol">r</span> : distance MP</div>
+                        <div class="variable-item"><span class="variable-symbol">θ</span> : angle avec la normale</div>
+                        <div class="variable-symbol">k = 2π/λ</span> : nombre d'onde</div>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3 class="card-title">🚪 Diffraction par une Fente Simple</h3>
+                    
+                    <div class="ascii-diagram">
+    Onde plane    │◄─── a ────►│
+    ═══════════► │             │ ═══► Écran
+                 │    Fente    │
+                 │             │
+                    </div>
+                    
+                    <div class="formula-title">Distribution d'intensité :</div>
+                    <div class="formula">
+                        I(θ) = I₀ · (sin(β)/β)²
+                    </div>
+                    
+                    <div class="formula-title">Avec :</div>
+                    <div class="formula">
+                        β = (πa sin θ)/λ
+                    </div>
+                    
+                    <div class="formula-title">Minima de diffraction :</div>
+                    <div class="formula">
+                        sin θ = kλ/a  (k = ±1, ±2, ±3, ...)
+                    </div>
+                    
+                    <div class="important">
+                        <strong>Largeur du pic central :</strong><br>
+                        Δθ = 2λ/a (entre les deux premiers minima)
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3 class="card-title">⭕ Diffraction par une Ouverture Circulaire</h3>
+                    
+                    <div class="formula-title">Distribution d'intensité :</div>
+                    <div class="formula">
+                        I(θ) = I₀ · [2J₁(β)/β]²
+                    </div>
+                    
+                    <div class="formula-title">Avec :</div>
+                    <div class="formula">
+                        β = (2πR sin θ)/λ
+                    </div>
+                    
+                    <div class="formula-title">Premier minimum (tache d'Airy) :</div>
+                    <div class="formula">
+                        sin θ = 1.22λ/D
+                    </div>
+                    
+                    <div class="variables">
+                        <div class="variable-item"><span class="variable-symbol">J₁</span> : fonction de Bessel de première espèce</div>
+                        <div class="variable-item"><span class="variable-symbol">R</span> : rayon de l'ouverture</div>
+                        <div class="variable-item"><span class="variable-symbol">D = 2R</span> : diamètre</div>
+                    </div>
+                    
+                    <div class="example">
+                        <strong>Application :</strong> Pouvoir de résolution d'un instrument d'optique<br>
+                        θ<sub>min</sub> = 1.22λ/D (critère de Rayleigh)
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3 class="card-title">📏 Réseau de Diffraction</h3>
+                    
+                    <div class="formula-title">Équation du réseau :</div>
+                    <div class="formula">
+                        d sin θ = mλ  (m = 0, ±1, ±2, ...)
+                    </div>
+                    
+                    <div class="formula-title">Distribution d'intensité :</div>
+                    <div class="formula">
+                        I(θ) = I₀ · (sin(Nγ)/sin(γ))² · (sin(β)/β)²
+                    </div>
+                    
+                    <div class="formula-title">Avec :</div>
+                    <div class="formula">
+                        γ = (πd sin θ)/λ<br>
+                        β = (πa sin θ)/λ
+                    </div>
+                    
+                    <div class="variables">
+                        <div class="variable-item"><span class="variable-symbol">d</span> : pas du réseau</div>
+                        <div class="variable-item"><span class="variable-symbol">a</span> : largeur d'une fente</div>
+                        <div class="variable-item"><span class="variable-symbol">N</span> : nombre de fentes</div>
+                        <div class="variable-item"><span class="variable-symbol">m</span> : ordre de diffraction</div>
+                    </div>
+                    
+                    <div class="formula-title">Pouvoir de résolution :</div>
+                    <div class="formula">
+                        R = λ/Δλ = mN
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Fentes de Young -->
+        <div id="young" class="content-section">
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3 class="card-title">👥 Expérience des Fentes de Young</h3>
+                    
+                    <div class="ascii-diagram">
+                Source S
+                    │
+                    │     S₁  ╲
+                    ├─────────── ╲
+                    │           ╲ ╲
+    Écran d'Young   │       P   ╲ ╲  Écran
+    ═══════════════════════════════╲═╲═══
+                    │               ╲ ╲
+                    ├─────────── ╱ ╱
+                    │     S₂  ╱
+                    │
+                Distance D
+                    </div>
+                    
+                    <div class="formula-title">Différence de marche :</div>
+                    <div class="formula">
+                        δ = (a·x)/D
+                    </div>
+                    
+                    <div class="formula-title">Position des franges brillantes :</div>
+                    <div class="formula">
+                        x_m = (mλD)/a  (m = 0, ±1, ±2, ...)
+                    </div>
+                    
+                    <div class="formula-title">Position des franges sombres :</div>
+                    <div class="formula">
+                        x_m = ((m + 1/2)λD)/a
+                    </div>
+                    
+                    <div class="variables">
+                        <div class="variable-item"><span class="variable-symbol">a</span> : distance entre les fentes</div>
+                        <div class="variable-item"><span class="variable-symbol">D</span> : distance fentes-écran</div>
+                        <div class="variable-item"><span class="variable-symbol">x</span> : position sur l'écran</div>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3 class="card-title">📐 Interfrange et Largeur</h3>
+                    
+                    <div class="formula-title">Interfrange :</div>
+                    <div class="formula">
+                        i = λD/a
+                    </div>
+                    
+                    <div class="formula-title">Distribution d'intensité :</div>
+                    <div class="formula">
+                        I(x) = 4I₀ cos²(πax/λD)
+                    </div>
+                    
+                    <div class="formula-title">Avec diffraction par les fentes :</div>
+                    <div class="formula">
+                        I(x) = 4I₀ cos²(πax/λD) · (sin(πbx/λD)/(πbx/λD))²
+                    </div>
+                    
+                    <div class="variables">
+                        <div class="variable-item"><span class="variable-symbol">i</span> : interfrange</div>
+                        <div class="variable-item"><span class="variable-symbol">b</span> : largeur d'une fente</div>
+                    </div>
+                    
+                    <div class="conditions">
+                        <strong>Conditions d'observation :</strong><br>
+                        • D >> a (approximation de Fresnel)<br>
+                        • λ << a (optique physique)<br>
+                        • Éclairage cohérent
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3 class="card-title">🔍 Mesures Expérimentales</h3>
+                    
+                    <div class="formula-title">Mesure de longueur d'onde :</div>
+                    <div class="formula">
+                        λ = (a·i)/D
+                    </div>
+                    
+                    <div class="formula-title">Mesure d'indice de réfraction :</div>
+                    <div class="formula">
+                        n = 1 + (N·λ)/e
+                    </div>
+                    
+                    <div class="example">
+                        <strong>Protocole expérimental :</strong><br>
+                        1. Mesurer la distance D<br>
+                        2. Mesurer l'interfrange i<br>
+                        3. Connaître la distance a entre fentes<br>
+                        4. Calculer λ = ai/D
+                    </div>
+                    
+                    <div class="variables">
+                        <div class="variable-item"><span class="variable-symbol">N</span> : nombre de franges déplacées</div>
+                        <div class="variable-item"><span class="variable-symbol">e</span> : épaisseur de la lame</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Fresnel -->
+        <div id="fresnel" class="content-section">
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3 class="card-title">🎯 Zones de Fresnel</h3>
+                    
+                    <div class="explanation">
+                        Les zones de Fresnel permettent de calculer la diffraction en divisant le front d'onde en zones annulaires.
+                    </div>
+                    
+                    <div class="formula-title">Rayon de la nᵉ zone :</div>
+                    <div class="formula">
+                        ρₙ = √(nλR₁R₂/(R₁ + R₂))
+                    </div>
+                    
+                    <div class="formula-title">Nombre de Fresnel :</div>
+                    <div class="formula">
+                        F = a²/(λD)
+                    </div>
+                    
+                    <div class="conditions">
+                        <strong>Régimes de diffraction :</strong><br>
+                        • F >> 1 : optique géométrique<br>
+                        • F ≈ 1 : diffraction de Fresnel<br>
+                        • F << 1 : diffraction de Fraunhofer
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3 class="card-title">📡 Diffraction de Fresnel</h3>
+                    
+                    <div class="formula-title">Intégrales de Fresnel :</div>
+                    <div class="formula">
+                        C(u) = ∫₀ᵘ cos(πt²/2) dt<br>
+                        S(u) = ∫₀ᵘ sin(πt²/2) dt
+                    </div>
+                    
+                    <div class="formula-title">Paramètre de Fresnel :</div>
+                    <div class="formula">
+                        u = y√(2/λD)
+                    </div>
+                    
+                    <div class="formula-title">Amplitude complexe :</div>
+                    <div class="formula">
+                        E = E₀[(1/2 + C(u)) + i(1/2 + S(u))]
+                    </div>
+                    
+                    <div class="formula-title">Intensité :</div>
+                    <div class="formula">
+                        I = I₀[(1/2 + C(u))² + (1/2 + S(u))²]
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3 class="card-title">🌊 Diffraction par un Bord Droit</h3>
+                    
+                    <div class="ascii-diagram">
+    Onde plane      │
+    ═══════════════►│ Obstacle
+                    │ opaque
+                    │
+                    ├─────────► Zone d'ombre
+                    │           géométrique
+                    │
+                    </div>
+                    
+                    <div class="formula-title">Position du bord géométrique :</div>
+                    <div class="formula">
+                        y₀ = 0
+                    </div>
+                    
+                    <div class="formula-title">Intensité relative :</div>
+                    <div class="formula">
+                        I/I₀ = (1/4)[(1 + C(u))² + (1 + S(u))²]
+                    </div>
+                    
+                    <div class="important">
+                        <strong>Points remarquables :</strong><br>
+                        • Au bord géométrique : I = I₀/4<br>
+                        • Dans la zone éclairée : oscillations<br>
+                        • Dans la zone d'ombre : décroissance exponentielle
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3 class="card-title">🔳 Diffraction par une Fente</h3>
+                    
+                    <div class="formula-title">Paramètres de Fresnel :</div>
+                    <div class="formula">
+                        u₁ = (y + a/2)√(2/λD)<br>
+                        u₂ = (y - a/2)√(2/λD)
+                    </div>
+                    
+                    <div class="formula-title">Intensité :</div>
+                    <div class="formula">
+                        I = (I₀/4)[(C(u₂) - C(u₁))² + (S(u₂) - S(u₁))²]
+                    </div>
+                    
+                    <div class="example">
+                        <strong>Cas limite de Fraunhofer :</strong><br>
+                        Quand D → ∞, on retrouve :<br>
+                        I = I₀(sin(β)/β)² avec β = πa sin θ/λ
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Simulations -->
+        <div id="simulations" class="content-section">
+            <div class="simulation-container">
+                <h3 class="sim-title">🎮 Simulation Interactive - Fentes de Young</h3>
+                
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <label class="control-label">Longueur d'onde λ (nm)</label>
+                        <input type="range" id="wavelength" min="400" max="700" step="10" value="550">
+                        <div class="value-display" id="wavelengthValue">550 nm</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Distance fentes a (mm)</label>
+                        <input type="range" id="slitSeparation" min="0.1" max="2" step="0.1" value="0.5">
+                        <div class="value-display" id="slitSeparationValue">0.5 mm</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Distance écran D (m)</label>
+                        <input type="range" id="screenDistance" min="0.5" max="3" step="0.1" value="1.5">
+                        <div class="value-display" id="screenDistanceValue">1.5 m</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Largeur fente b (μm)</label>
+                        <input type="range" id="slitWidth" min="10" max="200" step="10" value="50">
+                        <div class="value-display" id="slitWidthValue">50 μm</div>
+                    </div>
+                </div>
+                
+                <canvas id="youngCanvas" width="800" height="400"></canvas>
+                
+                <div class="formula" style="margin-top: 20px;">
+                    <div id="calculatedValues">
+                        Interfrange calculé : <span id="interfrange">0</span> mm<br>
+                        Position 1ère frange : <span id="firstFringe">0</span> mm<br>
+                        Largeur pic central diffraction : <span id="centralWidth">0</span> mm
+                    </div>
+                </div>
+            </div>
+
+            <div class="simulation-container">
+                <h3 class="sim-title">📊 Simulation - Diffraction par Fente Simple</h3>
+                
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <label class="control-label">Largeur fente a (μm)</label>
+                        <input type="range" id="diffSlitWidth" min="10" max="500" step="10" value="100">
+                        <div class="value-display" id="diffSlitWidthValue">100 μm</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Longueur d'onde (nm)</label>
+                        <input type="range" id="diffWavelength" min="400" max="700" step="10" value="550">
+                        <div class="value-display" id="diffWavelengthValue">550 nm</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Distance D (m)</label>
+                        <input type="range" id="diffDistance" min="0.5" max="3" step="0.1" value="2">
+                        <div class="value-display" id="diffDistanceValue">2 m</div>
+                    </div>
+                </div>
+                
+                <canvas id="diffractionCanvas" width="800" height="300"></canvas>
+                
+                <div class="formula" style="margin-top: 15px;">
+                    <div id="diffractionValues">
+                        Largeur pic central : <span id="centralPeakWidth">0</span> mm<br>
+                        Position 1er minimum : <span id="firstMinimum">0</span> mm<br>
+                        Rapport largeurs I₂/I₀ : <span id="intensityRatio">0</span>%
+                    </div>
+                </div>
+            </div>
+
+            <div class="simulation-container">
+                <h3 class="sim-title">🌈 Visualisation Spectrale - Réseau de Diffraction</h3>
+                
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <label class="control-label">Pas du réseau d (μm)</label>
+                        <input type="range" id="gratingPeriod" min="0.5" max="5" step="0.1" value="2">
+                        <div class="value-display" id="gratingPeriodValue">2 μm</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Nombre de fentes N</label>
+                        <input type="range" id="gratingSlits" min="2" max="20" step="1" value="10">
+                        <div class="value-display" id="gratingSlitsValue">10</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Ordre m</label>
+                        <input type="range" id="diffractionOrder" min="1" max="3" step="1" value="1">
+                        <div class="value-display" id="diffractionOrderValue">1</div>
+                    </div>
+                </div>
+                
+                <canvas id="gratingCanvas" width="800" height="350"></canvas>
+                
+                <div class="formula" style="margin-top: 15px;">
+                    <div id="gratingValues">
+                        Angle diffraction (rouge) : <span id="redAngle">0</span>°<br>
+                        Angle diffraction (bleu) : <span id="blueAngle">0</span>°<br>
+                        Pouvoir de résolution : <span id="resolutionPower">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gestion des onglets
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Variables globales pour les simulations
+        let animationFrameId;
+
+        // Simulation des fentes de Young
+        function simulateYoung() {
+            const canvas = document.getElementById('youngCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const lambda = parseFloat(document.getElementById('wavelength').value) * 1e-9; // en m
+            const a = parseFloat(document.getElementById('slitSeparation').value) * 1e-3; // en m
+            const D = parseFloat(document.getElementById('screenDistance').value); // en m
+            const b = parseFloat(document.getElementById('slitWidth').value) * 1e-6; // en m
+            
+            // Calculs
+            const interfrange = (lambda * D / a) * 1000; // en mm
+            const firstFringe = interfrange;
+            const centralWidth = (2 * lambda * D / b) * 1000; // en mm
+            
+            // Mise à jour des valeurs
+            document.getElementById('interfrange').textContent = interfrange.toFixed(2);
+            document.getElementById('firstFringe').textContent = firstFringe.toFixed(2);
+            document.getElementById('centralWidth').textContent = centralWidth.toFixed(2);
+            
+            // Nettoyage du canvas
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Échelle pour l'affichage
+            const scale = canvas.height / (20e-3); // 20mm total
+            const centerY = canvas.height / 2;
+            
+            // Tracé du profil d'intensité
+            ctx.strokeStyle = getWavelengthColor(lambda * 1e9);
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            for (let i = 0; i < canvas.width; i++) {
+                const y = (i - canvas.width/2) / scale; // position en m
+                const x_screen = y;
+                
+                // Terme d'interférence
+                const phase_interference = Math.PI * a * x_screen / (lambda * D);
+                const interference = Math.cos(phase_interference);
+                
+                // Terme de diffraction
+                const phase_diffraction = Math.PI * b * x_screen / (lambda * D);
+                let diffraction = 1;
+                if (phase_diffraction !== 0) {
+                    diffraction = Math.sin(phase_diffraction) / phase_diffraction;
+                }
+                
+                // Intensité totale
+                const intensity = Math.pow(interference * diffraction, 2);
+                const displayY = centerY - intensity * 150;
+                
+                if (i === 0) {
+                    ctx.moveTo(i, displayY);
+                } else {
+                    ctx.lineTo(i, displayY);
+                }
+            }
+            ctx.stroke();
+            
+            // Grille de référence
+            ctx.strokeStyle = 'rgba(100, 181, 246, 0.3)';
+            ctx.lineWidth = 1;
+            
+            // Lignes horizontales
+            for (let i = 0; i <= 4; i++) {
+                const y = (canvas.height / 4) * i;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            // Ligne centrale verticale
+            ctx.beginPath();
+            ctx.moveTo(canvas.width/2, 0);
+            ctx.lineTo(canvas.width/2, canvas.height);
+            ctx.stroke();
+            
+            // Marqueurs des franges
+            const fringeSpacing = interfrange * 1e-3 * scale; // en pixels
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.setLineDash([5, 5]);
+            
+            for (let n = -5; n <= 5; n++) {
+                if (n === 0) continue;
+                const x = canvas.width/2 + n * fringeSpacing;
+                if (x > 0 && x < canvas.width) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, canvas.height);
+                    ctx.stroke();
+                }
+            }
+            ctx.setLineDash([]);
+        }
+
+        // Simulation de diffraction par fente simple
+        function simulateDiffraction() {
+            const canvas = document.getElementById('diffractionCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const a = parseFloat(document.getElementById('diffSlitWidth').value) * 1e-6; // en m
+            const lambda = parseFloat(document.getElementById('diffWavelength').value) * 1e-9; // en m
+            const D = parseFloat(document.getElementById('diffDistance').value); // en m
+            
+            // Calculs
+            const centralWidth = (2 * lambda * D / a) * 1000; // en mm
+            const firstMin = (lambda * D / a) * 1000; // en mm
+            
+            document.getElementById('centralPeakWidth').textContent = centralWidth.toFixed(2);
+            document.getElementById('firstMinimum').textContent = firstMin.toFixed(2);
+            
+            // Nettoyage
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Échelle
+            const scale = canvas.height / (10e-3); // 10mm total
+            const centerY = canvas.height / 2;
+            
+            // Profil de diffraction
+            ctx.strokeStyle = getWavelengthColor(lambda * 1e9);
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            let maxIntensity = 0;
+            const intensities = [];
+            
+            for (let i = 0; i < canvas.width; i++) {
+                const y = (i - canvas.width/2) / scale;
+                const beta = Math.PI * a * y / (lambda * D);
+                
+                let intensity;
+                if (Math.abs(beta) < 1e-6) {
+                    intensity = 1;
+                } else {
+                    intensity = Math.pow(Math.sin(beta) / beta, 2);
+                }
+                
+                intensities.push(intensity);
+                maxIntensity = Math.max(maxIntensity, intensity);
+            }
+            
+            // Tracé
+            for (let i = 0; i < canvas.width; i++) {
+                const intensity = intensities[i] / maxIntensity;
+                const displayY = centerY - intensity * 120;
+                
+                if (i === 0) {
+                    ctx.moveTo(i, displayY);
+                } else {
+                    ctx.lineTo(i, displayY);
+                }
+            }
+            ctx.stroke();
+            
+            // Calcul du rapport d'intensité du premier maximum secondaire
+            const beta_secondary = 3 * Math.PI / 2;
+            const intensity_secondary = Math.pow(Math.sin(beta_secondary) / beta_secondary, 2);
+            const ratio = (intensity_secondary * 100).toFixed(1);
+            document.getElementById('intensityRatio').textContent = ratio;
+            
+            // Grille
+            ctx.strokeStyle = 'rgba(100, 181, 246, 0.2)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 3; i++) {
+                const y = (canvas.height / 3) * i;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        }
+
+        // Simulation du réseau de diffraction
+        function simulateGrating() {
+            const canvas = document.getElementById('gratingCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const d = parseFloat(document.getElementById('gratingPeriod').value) * 1e-6; // en m
+            const N = parseInt(document.getElementById('gratingSlits').value);
+            const m = parseInt(document.getElementById('diffractionOrder').value);
+            
+            // Calculs pour différentes longueurs d'onde
+            const lambda_red = 650e-9;
+            const lambda_blue = 450e-9;
+            
+            const angle_red = Math.asin(m * lambda_red / d) * 180 / Math.PI;
+            const angle_blue = Math.asin(m * lambda_blue / d) * 180 / Math.PI;
+            const resolution = m * N;
+            
+            document.getElementById('redAngle').textContent = angle_red.toFixed(1);
+            document.getElementById('blueAngle').textContent = angle_blue.toFixed(1);
+            document.getElementById('resolutionPower').textContent = resolution;
+            
+            // Nettoyage
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Simulation pour lumière blanche
+            const wavelengths = [];
+            const colors = [];
+            for (let wl = 400; wl <= 700; wl += 10) {
+                wavelengths.push(wl * 1e-9);
+                colors.push(getWavelengthColor(wl));
+            }
+            
+            const centerX = canvas.width / 2;
+            const scale = canvas.width / (2 * Math.PI / 3); // ±60°
+            
+            // Tracé du spectre pour chaque ordre
+            for (let order = -2; order <= 2; order++) {
+                if (order === 0) continue;
+                
+                wavelengths.forEach((lambda, index) => {
+                    if (Math.abs(order * lambda / d) <= 1) { // Condition physique
+                        const angle = Math.asin(order * lambda / d);
+                        const x = centerX + angle * scale;
+                        
+                        if (x > 0 && x < canvas.width) {
+                            ctx.strokeStyle = colors[index];
+                            ctx.lineWidth = 3;
+                            ctx.beginPath();
+                            ctx.moveTo(x, canvas.height - 50);
+                            ctx.lineTo(x, canvas.height - 20);
+                            ctx.stroke();
+                            
+                            // Étiquette pour l'ordre
+                            if (index === 0) {
+                                ctx.fillStyle = 'white';
+                                ctx.font = '12px Arial';
+                                ctx.textAlign = 'center';
+                                ctx.fillText(`m=${order}`, x, canvas.height - 5);
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Ordre central (m=0)
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(centerX, canvas.height - 50);
+            ctx.lineTo(centerX, canvas.height - 20);
+            ctx.stroke();
+            
+            ctx.fillStyle = 'white';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('m=0', centerX, canvas.height - 5);
+            
+            // Échelle angulaire
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 1;
+            for (let angle = -60; angle <= 60; angle += 15) {
+                const x = centerX + (angle * Math.PI / 180) * scale;
+                if (x > 0 && x < canvas.width) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, canvas.height - 60);
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                    ctx.font = '10px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`${angle}°`, x, 15);
+                }
+            }
+        }
+
+        // Fonction utilitaire pour obtenir la couleur d'une longueur d'onde
+        function getWavelengthColor(wavelength) {
+            let r = 0, g = 0, b = 0;
+            
+            if (wavelength >= 380 && wavelength < 440) {
+                r = -(wavelength - 440) / (440 - 380);
+                g = 0;
+                b = 1;
+            } else if (wavelength >= 440 && wavelength < 490) {
+                r = 0;
+                g = (wavelength - 440) / (490 - 440);
+                b = 1;
+            } else if (wavelength >= 490 && wavelength < 510) {
+                r = 0;
+                g = 1;
+                b = -(wavelength - 510) / (510 - 490);
+            } else if (wavelength >= 510 && wavelength < 580) {
+                r = (wavelength - 510) / (580 - 510);
+                g = 1;
+                b = 0;
+            } else if (wavelength >= 580 && wavelength < 645) {
+                r = 1;
+                g = -(wavelength - 645) / (645 - 580);
+                b = 0;
+            } else if (wavelength >= 645 && wavelength <= 780) {
+                r = 1;
+                g = 0;
+                b = 0;
+            }
+            
+            // Intensité
+            let intensity = 1;
+            if (wavelength > 700) intensity = 0.3 + 0.7 * (780 - wavelength) / (780 - 700);
+            if (wavelength < 420) intensity = 0.3 + 0.7 * (wavelength - 380) / (420 - 380);
+            
+            r = Math.round(255 * r * intensity);
+            g = Math.round(255 * g * intensity);
+            b = Math.round(255 * b * intensity);
+            
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // Mise à jour des valeurs affichées
+        function updateValues() {
+            document.getElementById('wavelengthValue').textContent = document.getElementById('wavelength').value + ' nm';
+            document.getElementById('slitSeparationValue').textContent = document.getElementById('slitSeparation').value + ' mm';
+            document.getElementById('screenDistanceValue').textContent = document.getElementById('screenDistance').value + ' m';
+            document.getElementById('slitWidthValue').textContent = document.getElementById('slitWidth').value + ' μm';
+            
+            document.getElementById('diffSlitWidthValue').textContent = document.getElementById('diffSlitWidth').value + ' μm';
+            document.getElementById('diffWavelengthValue').textContent = document.getElementById('diffWavelength').value + ' nm';
+            document.getElementById('diffDistanceValue').textContent = document.getElementById('diffDistance').value + ' m';
+            
+            document.getElementById('gratingPeriodValue').textContent = document.getElementById('gratingPeriod').value + ' μm';
+            document.getElementById('gratingSlitsValue').textContent = document.getElementById('gratingSlits').value;
+            document.getElementById('diffractionOrderValue').textContent = document.getElementById('diffractionOrder').value;
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Young's slits controls
+            ['wavelength', 'slitSeparation', 'screenDistance', 'slitWidth'].forEach(id => {
+                document.getElementById(id).addEventListener('input', () => {
+                    updateValues();
+                    simulateYoung();
+                });
+            });
+            
+            // Diffraction controls
+            ['diffSlitWidth', 'diffWavelength', 'diffDistance'].forEach(id => {
+                document.getElementById(id).addEventListener('input', () => {
+                    updateValues();
+                    simulateDiffraction();
+                });
+            });
+            
+            // Grating controls
+            ['gratingPeriod', 'gratingSlits', 'diffractionOrder'].forEach(id => {
+                document.getElementById(id).addEventListener('input', () => {
+                    updateValues();
+                    simulateGrating();
+                });
+            });
+            
+            // Initialisation
+            updateValues();
+            simulateYoung();
+            simulateDiffraction();
+            simulateGrating();
+        });
+
+        // Animation continue pour les effets visuels
+        function animate() {
+            // Ici on peut ajouter des animations continues si nécessaire
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
